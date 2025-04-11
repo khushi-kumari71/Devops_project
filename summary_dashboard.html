@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Dashboard - Virtual Library</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background-color: #f0f4f8;
+      margin: 0;
+      padding: 30px;
+    }
+
+    .container {
+      max-width: 700px;
+      margin: auto;
+      background: #ffffff;
+      padding: 30px;
+      border-radius: 10px;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+      text-align: center;
+    }
+
+    h1 {
+      color: #333;
+    }
+
+    h3 {
+      color: #555;
+    }
+
+    .stats {
+      font-size: 24px;
+      margin: 20px 0;
+      color: #2c3e50;
+    }
+
+    .manage-btn {
+      display: inline-block;
+      padding: 12px 24px;
+      background-color: #5f27cd;
+      color: white;
+      text-decoration: none;
+      border-radius: 6px;
+      font-weight: bold;
+      transition: 0.3s;
+    }
+
+    .manage-btn:hover {
+      background-color: #341f97;
+    }
+
+    .logout {
+      text-align: right;
+      margin-bottom: 15px;
+    }
+
+    .logout a {
+      text-decoration: none;
+      color: red;
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="logout">
+    <a href="/logout">🔓 Logout</a>
+  </div>
+
+  <div class="container">
+    <h1>Welcome, {{ username }}!</h1>
+
+    <div class="stats">
+      📚 Total Books in Library: <strong>{{ total_books }}</strong>
+    </div>
+
+    <a href="/dashboard" class="manage-btn">📖 Manage Books</a>
+  </div>
+
+</body>
+</html>
+
