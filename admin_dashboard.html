@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Admin Dashboard</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background: #f2f2f2;
+      padding: 20px;
+    }
+
+    h1, h2 {
+      text-align: center;
+    }
+
+    .stats {
+      display: flex;
+      justify-content: space-around;
+      margin-bottom: 30px;
+      font-size: 18px;
+    }
+
+    .form-container {
+      background: white;
+      padding: 20px;
+      border-radius: 10px;
+      max-width: 500px;
+      margin: auto;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+    }
+
+    input, button {
+      width: 100%;
+      padding: 10px;
+      margin: 8px 0;
+      border-radius: 5px;
+      border: 1px solid #ccc;
+    }
+
+    button {
+      background-color: #5f27cd;
+      color: white;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    table {
+      width: 100%;
+      margin-top: 40px;
+      border-collapse: collapse;
+      background: white;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+    }
+
+    th, td {
+      padding: 12px;
+      text-align: center;
+      border: 1px solid #ddd;
+    }
+
+    th {
+      background: #5f27cd;
+      color: white;
+    }
+
+    .links {
+      text-align: center;
+      margin-top: 20px;
+    }
+
+    .links a {
+      margin: 0 10px;
+      text-decoration: none;
+      color: #0984e3;
+      font-weight: bold;
+    }
+
+    .delete-form {
+      display: inline;
+    }
+
+    .due-table {
+      margin-top: 40px;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>📚 Admin Dashboard</h1>
+
+  <div class="stats">
+    <div>Total Books: {{ total_books }}</div>
+    <div>Registered Users: {{ total_users }}</div>
+    <div>Borrowed Books: {{ total_borrowed }}</div>
+  </div>
+
+  <!-- Add Book Form -->
+  <div class="form-container">
+    <h2>Add Book</h2>
+    <form method="POST">
+      <input type="hidden" name="add" value="1">
+      <input type="text" name="title" placeholder="Title" required>
+      <input type="text" name="author" placeholder="Author" required>
+      <input type="text" name="genre" placeholder="Genre" required>
+      <input type="number" name="copies" placeholder="Available Copies" required>
+      <button type="submit">Add Book</button>
+    </form>
+  </div>
+
+  <!-- All Books Table -->
+  <h2 style="margin-top: 40px;">📖 All Books</h2>
+  <table>
+    <tr>
+      <th>ID</th>
+      <th>Title</th>
+      <th>Author</th>
+      <th>Genre</th>
+      <th>Copies</th>
+      <th>Action</th>
+    </tr>
+    {% for book in books %}
+    <tr>
+      <td>{{ book['id'] }}</td>
+      <td>{{ book['title'] }}</td>
+      <td>{{ book['author'] }}</td>
+      <td>{{ book['genre'] }}</td>
+      <td>{{ book['available_copies'] }}</td>
+      <td>
+        <form method="POST" class="delete-form" onsubmit="return confirm('Delete this book?');">
+          <input type="hidden" name="book_id" value="{{ book['id'] }}">
+          <button type="submit" name="delete" value="1">🗑 Delete</button>
+        </form>
+      </td>
+    </tr>
+    {% endfor %}
+  </table>
+
+  <!-- Due Books Table -->
+  {% if due_books %}
+    <h2 class="due-table">📅 Due Books</h2>
+    <table>
+      <tr>
+        <th>Book Title</th>
+        <th>Borrower Name</th>
+        <th>Due Date</th>
+      </tr>
+      {% for d in due_books %}
+      <tr>
+        <td>{{ d['title'] }}</td>
+        <td>{{ d['name'] }}</td>
+        <td>{{ d['due_date'] }}</td>
+      </tr>
+      {% endfor %}
+    </table>
+  {% endif %}
+
+  <div class="links">
+    <a href="{{ url_for('borrowed_books_view') }}">Borrowed Books</a>
+    <a href="{{ url_for('registered_users_view') }}">Registered Users</a> <!-- Updated link -->
+    <a href="{{ url_for('logout') }}">Logout</a>
+  </div>
+  
+  
+  
+
+</body>
+</html>
+
+
+
+
+
+
+
