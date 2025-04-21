@@ -6,12 +6,6 @@ pipeline {
     }
 
     stages {
-        stage('Clone Repository') {
-            steps {
-                git 'https://github.com/khushi-kumari71/Devops_project.git'
-            }
-        }
-
         stage('Install Flask') {
             steps {
                 sh 'pip install flask'
@@ -21,7 +15,6 @@ pipeline {
 
         stage('Run Flask App') {
             steps {
-                // run in background
                 sh 'nohup python app.py &'
                 sleep time: 10, unit: 'SECONDS'
             }
