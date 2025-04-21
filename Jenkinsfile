@@ -3,22 +3,27 @@
     agent any
 
     stages {
-        stage('Install Flask') {
+        stage('Checkout SCM') {
             steps {
-                sh 'pip3 install flask'
+                checkout scm
+            }
+        }
+
+        stage('Build Docker Image') {
+            steps {
+                sh 'docker build -t flask-library-app .'
             }
         }
 
         stage('Run Flask App') {
             steps {
-                sh 'nohup python3 app.py &'
-                sleep time: 5, unit: 'SECONDS'
+                sh 'docker run -d -p 5000:5000 flask-library-app'
             }
         }
 
         stage('Health Check') {
             steps {
-                sh 'curl http://localhost:5000 || echo "App failed health check"'
+                sh 'curl --fail http://localhost:5000 || exit 1'
             }
         }
     }
