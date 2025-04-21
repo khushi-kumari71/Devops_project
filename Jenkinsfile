@@ -1,28 +1,24 @@
-pipeline {
-    agent any
 
-    environment {
-        FLASK_APP = "app.py"
-    }
+    pipeline {
+    agent any
 
     stages {
         stage('Install Flask') {
             steps {
-                sh 'pip install flask'
-                sh 'pip install -r requirements.txt || echo "No requirements.txt found, continuing..."'
+                sh 'pip3 install flask'
             }
         }
 
         stage('Run Flask App') {
             steps {
-                sh 'nohup python app.py &'
-                sleep time: 10, unit: 'SECONDS'
+                sh 'nohup python3 app.py &'
+                sleep time: 5, unit: 'SECONDS'
             }
         }
 
         stage('Health Check') {
             steps {
-                sh 'curl http://localhost:5000 || echo "Flask app is not reachable"'
+                sh 'curl http://localhost:5000 || echo "App failed health check"'
             }
         }
     }
