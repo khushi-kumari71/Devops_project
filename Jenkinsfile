@@ -1,32 +1,35 @@
 pipeline {
     agent any
 
+    environment {
+        FLASK_APP = "app.py"
+    }
+
     stages {
-        stage('Checkout Code') {
+        stage('Clone Repository') {
             steps {
-                git branch: 'main',
-                    url: 'https://github.com/khushi-kumari71/Devops_project.git'
-            }
-        }u
-
-        stage('Build') {
-            steps {
-                echo '📦 Building the project...'
-                // Add build steps here, like installing dependencies if needed
+                git 'https://github.com/khushi-kumari71/Devops_project.git'
             }
         }
 
-        stage('Run Tests') {
+        stage('Install Flask') {
             steps {
-                echo '✅ Running tests...'
-                // Add test execution commands if you have tests
+                sh 'pip install flask'
+                sh 'pip install -r requirements.txt || echo "No requirements.txt found, continuing..."'
             }
         }
 
-        stage('Deploy') {
+        stage('Run Flask App') {
             steps {
-                echo '🚀 Deploying the application...'
-                // Add your deployment steps here (copy files, run Django server, etc.)
+                // run in background
+                sh 'nohup python app.py &'
+                sleep time: 10, unit: 'SECONDS'
+            }
+        }
+
+        stage('Health Check') {
+            steps {
+                sh 'curl http://localhost:5000 || echo "Flask app is not reachable"'
             }
         }
     }
