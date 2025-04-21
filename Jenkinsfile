@@ -1,11 +1,10 @@
-
-    pipeline {
+pipeline {
     agent any
 
     stages {
         stage('Checkout') {
             steps {
-                git 'https://github.com/khushi-kumari71/Devops_project.git'
+                git branch: 'main', url: 'https://github.com/khushi-kumari71/Devops_project.git'
             }
         }
 
@@ -43,3 +42,4 @@
         }
     }
 }
+
