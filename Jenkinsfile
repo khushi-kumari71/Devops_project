@@ -2,22 +2,24 @@ pipeline {
     agent any
 
     environment {
-        IMAGE_NAME = "flask-library-app"
-        CONTAINER_NAME = "flask-app"
-        HOST_PORT = "5018"
-        CONTAINER_PORT = "5000"
+        IMAGE_NAME = 'flask-library-app'
+        CONTAINER_NAME = 'flask-app'
+        HOST_PORT = '5018'
+        CONTAINER_PORT = '5000'
     }
 
     stages {
-        stage('Clone Repo') {
+
+        stage('Checkout Code') {
             steps {
                 echo 'Cloning repository...'
-                // Jenkins will clone the repo automatically if using pipeline from SCM
+                checkout scm
             }
         }
 
         stage('Install Dependencies') {
             steps {
+                echo 'Setting up virtual environment and installing dependencies...'
                 sh '''
                     python3 -m venv venv
                     . venv/bin/activate
@@ -29,38 +31,35 @@ pipeline {
 
         stage('Build Docker Image') {
             steps {
-                script {
-                    sh "docker build -t $IMAGE_NAME ."
-                }
+                echo 'Building Docker image...'
+                sh "docker build -t $IMAGE_NAME ."
             }
         }
 
         stage('Stop & Remove Old Container') {
             steps {
-                script {
-                    sh "docker stop $CONTAINER_NAME || true"
-                    sh "docker rm $CONTAINER_NAME || true"
-                }
+                echo 'Stopping and removing old container if exists...'
+                sh "docker stop $CONTAINER_NAME || true"
+                sh "docker rm $CONTAINER_NAME || true"
             }
         }
 
-        stage('Run Container on Port 5018') {
+        stage('Run Container') {
             steps {
-                script {
-                    sh """
-                        docker run -d \
-                        --name $CONTAINER_NAME \
-                        -p $HOST_PORT:$CONTAINER_PORT \
-                        $IMAGE_NAME
-                    """
-                }
+                echo 'Running new container...'
+                sh """
+                    docker run -d \
+                    --name $CONTAINER_NAME \
+                    -p $HOST_PORT:$CONTAINER_PORT \
+                    $IMAGE_NAME
+                """
             }
         }
     }
 
     post {
         always {
-            echo 'Pipeline completed.'
+            echo 'Pipeline execution completed.'
         }
     }
 }
