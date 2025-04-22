@@ -1,11 +1,29 @@
 pipeline {
     agent any
 
+    environment {
+        IMAGE_NAME = "flask-library-app"
+        CONTAINER_NAME = "flask-app"
+        HOST_PORT = "5018"
+        CONTAINER_PORT = "5000"
+    }
+
     stages {
         stage('Clone Repo') {
             steps {
                 echo 'Cloning repository...'
                 // Jenkins will clone the repo automatically if using pipeline from SCM
+            }
+        }
+
+        stage('Install Dependencies') {
+            steps {
+                sh '''
+                    python3 -m venv venv
+                    . venv/bin/activate
+                    pip install --upgrade pip
+                    pip install -r requirements.txt
+                '''
             }
         }
 
