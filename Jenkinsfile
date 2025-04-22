@@ -1,4 +1,3 @@
-
 pipeline {
     agent any
 
@@ -29,25 +28,29 @@ pipeline {
 
         stage('Build Docker Image') {
             steps {
-                sh 'docker build -t $IMAGE_NAME .'
+                echo 'Building Docker image...'
+                // sh 'docker build -t $IMAGE_NAME .'
             }
         }
 
         stage('Stop and Remove Old Container') {
             steps {
-                sh 'docker stop $CONTAINER_NAME || true'
-                sh 'docker rm $CONTAINER_NAME || true'
+            echo 'Stopping and removing old container...'
+
+            //     sh 'docker stop $CONTAINER_NAME || true'
+            //     sh 'docker rm $CONTAINER_NAME || true'
             }
         }
 
         stage('Run New Container') {
             steps {
-                sh '''
-                    docker run -d \
-                    --name $CONTAINER_NAME \
-                    -p $HOST_PORT:$CONTAINER_PORT \
-                    $IMAGE_NAME
-                '''
+                echo 'Running new container...'
+                // sh '''
+                //     docker run -d \
+                //     --name $CONTAINER_NAME \
+                //     -p $HOST_PORT:$CONTAINER_PORT \
+                //     $IMAGE_NAME
+                // '''
             }
         }
     }
