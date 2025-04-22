@@ -1,55 +1,48 @@
 pipeline {
-    agent any
-
+    agent any  // Runs the pipeline on any available agent
+    
     environment {
-        IMAGE_NAME = 'dairy-management'
-        CONTAINER_NAME = 'dairy-prod-5018'
-        HOST_PORT = '5018'
-        CONTAINER_PORT = '5000'
+        // Set up any environment variables you may need
+        MY_ENV_VAR = "value"
     }
 
     stages {
-        stage('Clone Repo') {
+        stage('Checkout') {
             steps {
-                echo 'Cloning repository...'
-                // Jenkins will clone the repo automatically if using pipeline from SCM
+                // Pulls the code from the repository
+                git 'https://github.com/khushi-kumari71/Devops_project.git'
+            }
+        }
+        
+        stage('Build') {
+            steps {
+                // Compile/build your project (example for a Maven project)
+                sh 'mvn clean install'
+            }
+        }
+        
+        stage('Test') {
+            steps {
+                // Run unit tests (example for a Maven project)
+                sh 'mvn test'
             }
         }
 
-        stage('Build Docker Image') {
+        stage('Deploy') {
             steps {
-                script {
-                    sh "docker build -t $IMAGE_NAME ."
-                }
-            }
-        }
-
-        stage('Stop & Remove Old Container') {
-            steps {
-                script {
-                    sh "docker stop $CONTAINER_NAME || true"
-                    sh "docker rm $CONTAINER_NAME || true"
-                }
-            }
-        }
-
-        stage('Run Container on Port 5018') {
-            steps {
-                script {
-                    sh """
-                        docker run -d \
-                        --name $CONTAINER_NAME \
-                        -p $HOST_PORT:$CONTAINER_PORT \
-                        $IMAGE_NAME
-                    """
-                }
+                // Example: Deploy your application to a server
+                echo 'Deploying the application'
+                // Add deployment commands here (e.g., SCP, Docker, etc.)
             }
         }
     }
 
     post {
-        always {
-            echo 'Pipeline completed.'
+        success {
+            echo 'Pipeline succeeded!'
+        }
+        failure {
+            echo 'Pipeline failed.'
         }
     }
 }
