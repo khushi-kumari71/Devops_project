@@ -1,47 +1,55 @@
 pipeline {
     agent any
 
-    stages {
-        stage('Checkout') {
-            steps {
-                git 'https://github.com/khushi-kumari71/Devops_project.git'
-            }
-        }
+    environment {
+        IMAGE_NAME = 'dairy-management'
+        CONTAINER_NAME = 'dairy-prod-5018'
+        HOST_PORT = '5018'
+        CONTAINER_PORT = '5000'
+    }
 
-        stage('Install Dependencies') {
+    stages {
+        stage('Clone Repo') {
             steps {
-                sh '''
-                    python3 -m venv venv
-                    source venv/bin/activate
-                    pip install --break-system-packages -r requirements.txt
-                '''
+                echo 'Cloning repository...'
+                // Jenkins will clone the repo automatically if using pipeline from SCM
             }
         }
 
         stage('Build Docker Image') {
             steps {
-                sh 'docker build -t flask-library-app .'
+                script {
+                    sh "docker build -t $IMAGE_NAME ."
+                }
             }
         }
 
-        stage('Run Flask App') {
+        stage('Stop & Remove Old Container') {
             steps {
-                sh 'docker run -d --name flask-app -p 5000:5000 flask-library-app'
+                script {
+                    sh "docker stop $CONTAINER_NAME || true"
+                    sh "docker rm $CONTAINER_NAME || true"
+                }
             }
         }
 
-        stage('Health Check') {
+        stage('Run Container on Port 5018') {
             steps {
-                sh 'curl --fail http://localhost:5000 || exit 1'
+                script {
+                    sh """
+                        docker run -d \
+                        --name $CONTAINER_NAME \
+                        -p $HOST_PORT:$CONTAINER_PORT \
+                        $IMAGE_NAME
+                    """
+                }
             }
         }
     }
 
     post {
         always {
-            echo 'Cleaning up...'
-            sh 'docker stop flask-app || true'
-            sh 'docker rm flask-app || true'
+            echo 'Pipeline completed.'
         }
     }
 }
