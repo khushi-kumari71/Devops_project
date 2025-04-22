@@ -4,13 +4,17 @@ pipeline {
     stages {
         stage('Checkout') {
             steps {
-                git branch: 'main', url: 'https://github.com/khushi-kumari71/Devops_project.git'
+                git 'https://github.com/khushi-kumari71/Devops_project.git'
             }
         }
 
         stage('Install Dependencies') {
             steps {
-                sh 'pip install -r requirements.txt || true'
+                sh '''
+                    python3 -m venv venv
+                    source venv/bin/activate
+                    pip install --break-system-packages -r requirements.txt
+                '''
             }
         }
 
@@ -22,14 +26,13 @@ pipeline {
 
         stage('Run Flask App') {
             steps {
-                sh 'docker run -d -p 5000:5000 --name flask-app flask-library-app'
+                sh 'docker run -d --name flask-app -p 5000:5000 flask-library-app'
             }
         }
 
         stage('Health Check') {
             steps {
-                sh 'sleep 5'
-                sh 'curl -f http://localhost:5000 || echo "Health check failed"'
+                sh 'curl --fail http://localhost:5000 || exit 1'
             }
         }
     }
@@ -42,4 +45,3 @@ pipeline {
         }
     }
 }
-
